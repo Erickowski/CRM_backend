@@ -4,10 +4,13 @@ const { ApolloServer, gql } = require("apollo-server");
 const typeDefs = gql`
   type Curso {
     titulo: String
+  }
+  type Tecnologia {
     tecnologia: String
   }
   type Query {
-    obtenerCursos: Curso
+    obtenerCursos: [Curso]
+    obtenerTecnologia: [Tecnologia]
   }
 `;
 
@@ -33,7 +36,8 @@ const cursos = [
 // Resolvers
 const resolvers = {
   Query: {
-    obtenerCursos: () => cursos[0],
+    obtenerCursos: () => cursos,
+    obtenerTecnologia: () => cursos,
   },
 };
 
