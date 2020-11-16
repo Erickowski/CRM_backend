@@ -1,4 +1,5 @@
 const Usuario = require("../models/Usuario");
+const bcryptjs = require("bcryptjs");
 
 // Resolvers
 const resolvers = {
@@ -16,6 +17,8 @@ const resolvers = {
       }
 
       // Hashear el password
+      const salt = await bcryptjs.genSalt(10);
+      input.password = await bcryptjs.hash(password, salt);
 
       // Guardarlo en la base de datos
       try {
