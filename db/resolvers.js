@@ -118,6 +118,25 @@ const resolvers = {
 
       return "Producto eliminado";
     },
+    nuevoCliente: async (_, { input }) => {
+      // Verificar si el cliente ya está registrado
+      const { email } = input;
+      const cliente = await Cliente.findOne({ email });
+      if (cliente) {
+        throw new Error("Cliente ya registrado");
+      }
+      const nuevoCliente = new Cliente(input);
+      // Asignar el vendedor
+      nuevoCliente.vendedor = "5fb2d689b7761d25161083c9";
+
+      try {
+        // Guardarlos en la base de datos
+        const resultado = await nuevoCliente.save();
+        return resultado;
+      } catch (error) {
+        console.log(error);
+      }
+    },
   },
 };
 
