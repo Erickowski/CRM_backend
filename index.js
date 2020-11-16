@@ -7,6 +7,10 @@ const typeDefs = require("./db/schema");
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  context: () => {
+    const miContext = "Erick";
+    return { miContext };
+  },
 });
 
 // Arrancar el servidor
