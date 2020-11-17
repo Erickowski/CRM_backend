@@ -197,6 +197,32 @@ const resolvers = {
       await Cliente.findOneAndDelete({ _id: id });
       return "Cliente eliminado";
     },
+    nuevoPedido: async (_, { input }, ctx) => {
+      const { cliente } = input;
+      // Verificar si cliente existe o no
+      const clienteExiste = await Cliente.findById(cliente);
+      if (!clienteExiste) {
+        throw new Error("Ese cliente no existe");
+      }
+
+      // Verificar si el cliente es del vendedor
+      if (clienteExiste.vendedor.toString() !== ctx.id) {
+        throw new Error("No tienes los permisos");
+      }
+
+      // Revisar que el stock este disponible
+      for await (const articulo of input.pedido) {
+        const { id } = articulo;
+        const producto = await Producto.findById(id);
+        if (articulo.cantidad > producto.existencia) {
+          throw new Error(
+            `El articulo ${producto.nombre} excede la cantidad disponible`
+          );
+        }
+      }
+      // Asignarle un vendedor
+      // Guardarlo en la base de datos
+    },
   },
 };
 
