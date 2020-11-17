@@ -183,6 +183,20 @@ const resolvers = {
       });
       return cliente;
     },
+    eliminarCliente: async (_, { id }, ctx) => {
+      // Verificar si existe o no
+      let cliente = await Cliente.findById(id);
+      if (!cliente) {
+        throw new Error("Ese cliente no existe");
+      }
+      // Verificar si el vendedor es quien edita
+      if (cliente.vendedor.toString() !== ctx.id) {
+        throw new Error("No tienes los permisos");
+      }
+      // Eliminar el cliente
+      await Cliente.findOneAndDelete({ _id: id });
+      return "Cliente eliminado";
+    },
   },
 };
 
