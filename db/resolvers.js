@@ -167,6 +167,22 @@ const resolvers = {
         console.log(error);
       }
     },
+    actualizarCliente: async (_, { id, input }, ctx) => {
+      // Verificar si existe o no
+      let cliente = await Cliente.findById(id);
+      if (!cliente) {
+        throw new Error("Ese cliente no existe");
+      }
+      // Verificar si el vendedor es quien edita
+      if (cliente.vendedor.toString() !== ctx.id) {
+        throw new Error("No tienes los permisos");
+      }
+      // Guardar el cliente
+      cliente = await Cliente.findOneAndUpdate({ _id: id }, input, {
+        new: true,
+      });
+      return cliente;
+    },
   },
 };
 
