@@ -288,17 +288,19 @@ const resolvers = {
       }
 
       // Revisar el stock
-      for await (const articulo of existePedido.pedido) {
-        const { id } = articulo;
-        const producto = await Producto.findById(id);
-        if (articulo.cantidad > producto.existencia) {
-          throw new Error(
-            `El articulo ${producto.nombre} excede la cantidad disponible`
-          );
-        } else {
-          // restar la cantidad a lo disponible
-          producto.existencia = producto.existencia - articulo.cantidad;
-          await producto.save();
+      if (input.pedido) {
+        for await (const articulo of input.pedido) {
+          const { id } = articulo;
+          const producto = await Producto.findById(id);
+          if (articulo.cantidad > producto.existencia) {
+            throw new Error(
+              `El articulo ${producto.nombre} excede la cantidad disponible`
+            );
+          } else {
+            // restar la cantidad a lo disponible
+            producto.existencia = producto.existencia - articulo.cantidad;
+            await producto.save();
+          }
         }
       }
 
@@ -307,6 +309,21 @@ const resolvers = {
         new: true,
       });
       return resultado;
+    },
+    eliminarPedido: async (_, { id }, ctx) => {
+      // Si el pedido existe
+      const existePedido = await Pedido.findById(id);
+      if (!existePedido) {
+        throw new Error("El pedido no existe");
+      }
+      // Si el cliente y pedido pertenece al vendedor
+      if (existePedido.vendedor.toString() !== ctx.id) {
+        throw new Error("No tienes los permisos");
+      }
+
+      // Eliminar de la base de datos
+      await Pedido.findOneAndDelete({ _id: id });
+      return "Pedido eliminado";
     },
   },
 };
