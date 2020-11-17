@@ -74,6 +74,14 @@ const resolvers = {
         console.log(error);
       }
     },
+    obtenerPedidosVendedor: async (_, {}, { id }) => {
+      try {
+        const pedidos = await Pedido.find({ vendedor: id });
+        return pedidos;
+      } catch (error) {
+        console.log(error);
+      }
+    },
   },
   Mutation: {
     nuevoUsuario: async (_, { input }) => {
