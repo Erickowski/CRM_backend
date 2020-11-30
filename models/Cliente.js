@@ -26,6 +26,10 @@ const ClientesSchema = mongoose.Schema({
     type: String,
     trim: true,
   },
+  telefono: {
+    type: String,
+    trim: true,
+  },
   creado: {
     type: Date,
     default: Date.now(),
